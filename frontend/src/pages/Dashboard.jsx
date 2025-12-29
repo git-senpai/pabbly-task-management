@@ -7,7 +7,14 @@ import DeleteModal from '../components/DeleteModal';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useAuth } from '../context/AuthContext';
 
-const priorityColors = {
+const priorityHeaderColors = {
+  Low: 'text-green-700',
+  Medium: 'text-blue-700',
+  High: 'text-orange-700',
+  Urgent: 'text-red-700',
+};
+
+const priorityDotColors = {
   Low: 'bg-green-500',
   Medium: 'bg-blue-500',
   High: 'bg-orange-500',
@@ -22,6 +29,8 @@ const Dashboard = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [taskToDelete, setTaskToDelete] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Filters and pagination
   const [filters, setFilters] = useState({
@@ -55,7 +64,16 @@ const Dashboard = () => {
       const response = await taskAPI.getAll(params);
       
       if (response.data && response.data.data) {
-        setTasks(response.data.data);
+        // Filter by search query on client side if needed
+        let filteredTasks = response.data.data;
+        if (searchQuery) {
+          filteredTasks = filteredTasks.filter(task => 
+            task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (task.description && task.description.toLowerCase().includes(searchQuery.toLowerCase()))
+          );
+        }
+        
+        setTasks(filteredTasks);
         setPagination(prev => ({
           ...prev,
           total: response.data.pagination.total,
@@ -69,7 +87,7 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.limit, filters]);
+  }, [pagination.page, pagination.limit, filters, searchQuery]);
 
   // Debounce filter changes and reset to page 1
   useEffect(() => {
@@ -78,7 +96,7 @@ const Dashboard = () => {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [filters.priority, filters.status, filters.startDate, filters.endDate, filters.sortBy]);
+  }, [filters.priority, filters.status, filters.startDate, filters.endDate, filters.sortBy, searchQuery]);
 
   // Fetch tasks when filters, page, or limit changes
   useEffect(() => {
@@ -100,6 +118,11 @@ const Dashboard = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleEdit = (task) => {
+    setSelectedTask(task);
+    setIsModalOpen(true);
+  };
+
   const confirmDelete = async () => {
     try {
       await taskAPI.delete(taskToDelete._id);
@@ -116,10 +139,15 @@ const Dashboard = () => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
+  const clearFilter = (key) => {
+    setFilters(prev => ({ ...prev, [key]: '' }));
+  };
+
+  const activeFiltersCount = Object.values(filters).filter(v => v !== '').length;
+
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.pages) {
       setPagination(prev => ({ ...prev, page: newPage }));
-      // Scroll to top when page changes
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -128,23 +156,20 @@ const Dashboard = () => {
     setPagination(prev => ({
       ...prev,
       limit: parseInt(newLimit),
-      page: 1, // Reset to first page when limit changes
+      page: 1,
     }));
   };
 
-  // Generate page numbers for pagination
   const getPageNumbers = () => {
     const pages = [];
     const totalPages = pagination.pages;
     const currentPage = pagination.page;
 
     if (totalPages <= 7) {
-      // Show all pages if 7 or fewer
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Show first page, last page, current page, and pages around current
       if (currentPage <= 3) {
         for (let i = 1; i <= 5; i++) {
           pages.push(i);
@@ -183,277 +208,336 @@ const Dashboard = () => {
 
   return (
     <div>
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Task Dashboard</h1>
-          <p className="text-gray-600 mt-1">Manage and track your tasks</p>
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Task Dashboard</h1>
+            <p className="text-gray-600 mt-1">Manage and track your tasks</p>
+          </div>
+          <button
+            onClick={() => {
+              setSelectedTask(null);
+              setIsModalOpen(true);
+            }}
+            className="px-5 py-2.5 bg-slate-700 text-white rounded-lg font-medium hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 transition shadow-sm"
+          >
+            + Create Task
+          </button>
         </div>
-        <button
-          onClick={() => {
-            setSelectedTask(null);
-            setIsModalOpen(true);
-          }}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-lg"
-        >
-          + Create Task
-        </button>
-      </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-            <select
-              value={filters.priority}
-              onChange={(e) => handleFilterChange('priority', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-            >
-              <option value="">All Priorities</option>
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
-              <option value="Urgent">Urgent</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-            <select
-              value={filters.status}
-              onChange={(e) => handleFilterChange('status', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-            >
-              <option value="">All Status</option>
-              <option value="Pending">Pending</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
-            <input
-              type="date"
-              value={filters.startDate}
-              onChange={(e) => handleFilterChange('startDate', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
-            <input
-              type="date"
-              value={filters.endDate}
-              onChange={(e) => handleFilterChange('endDate', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
-            <select
-              value={filters.sortBy}
-              onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-            >
-              <option value="latest">Latest</option>
-              <option value="dueDate">Due Date</option>
-              <option value="priority">Priority</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Loading State */}
-      {loading && <LoadingSkeleton />}
-
-      {/* Task Lists by Priority */}
-      {!loading && (
-        <div className="space-y-6">
-          {priorities.map((priority) => {
-            const priorityTasks = groupedTasks[priority] || [];
-            // Hide priority section if no tasks AND (no priority filter OR filter doesn't match this priority)
-            if (priorityTasks.length === 0 && (!filters.priority || filters.priority !== priority)) {
-              return null;
-            }
-
-            return (
-              <div key={priority} className="bg-white rounded-lg shadow-sm p-6">
-                <div className="flex items-center mb-4">
-                  <div className={`w-3 h-3 rounded-full ${priorityColors[priority]} mr-3`}></div>
-                  <h2 className="text-xl font-semibold text-gray-900">{priority} Priority</h2>
-                  <span className="ml-3 px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded-full">
-                    {priorityTasks.length}
-                  </span>
-                </div>
-
-                {priorityTasks.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">No tasks in this priority</p>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {priorityTasks.map((task) => (
-                      <TaskCard
-                        key={task._id}
-                        task={task}
-                        onStatusChange={handleStatusChange}
-                        onDelete={handleDelete}
-                      />
-                    ))}
-                  </div>
-                )}
+        {/* Compact Filter Bar */}
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Search Bar */}
+            <div className="flex-1 min-w-[200px]">
+              <div className="relative">
+                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search tasks..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                />
               </div>
-            );
-          })}
+            </div>
 
-          {tasks.length === 0 && (
-            <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-              <p className="text-gray-500 text-lg">No tasks found</p>
+            {/* Active Filter Pills */}
+            {filters.priority && (
               <button
-                onClick={() => setIsModalOpen(true)}
-                className="mt-4 text-blue-600 hover:text-blue-700 font-semibold"
+                onClick={() => clearFilter('priority')}
+                className="flex gap-2 items-center px-3 py-1.5 border rounded-full text-sm hover:bg-gray-50 bg-blue-50 border-blue-200 text-blue-700"
               >
-                Create your first task
+                Priority: {filters.priority}
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
+            )}
+
+            {filters.status && (
+              <button
+                onClick={() => clearFilter('status')}
+                className="flex gap-2 items-center px-3 py-1.5 border rounded-full text-sm hover:bg-gray-50 bg-amber-50 border-amber-200 text-amber-700"
+              >
+                Status: {filters.status}
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+
+            {(filters.startDate || filters.endDate) && (
+              <button
+                onClick={() => {
+                  clearFilter('startDate');
+                  clearFilter('endDate');
+                }}
+                className="flex gap-2 items-center px-3 py-1.5 border rounded-full text-sm hover:bg-gray-50 bg-purple-50 border-purple-200 text-purple-700"
+              >
+                Date Range
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+
+            {/* Filter Button */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex gap-2 items-center px-3 py-1.5 border border-gray-300 rounded-full text-sm hover:bg-gray-50 text-gray-700"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+              </svg>
+              Filters
+              {activeFiltersCount > 0 && (
+                <span className="bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {activeFiltersCount}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Expanded Filter Panel */}
+          {showFilters && (
+            <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1.5">Priority</label>
+                <select
+                  value={filters.priority}
+                  onChange={(e) => handleFilterChange('priority', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                >
+                  <option value="">All Priorities</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">Urgent</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1.5">Status</label>
+                <select
+                  value={filters.status}
+                  onChange={(e) => handleFilterChange('status', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                >
+                  <option value="">All Status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1.5">Start Date</label>
+                <input
+                  type="date"
+                  value={filters.startDate}
+                  onChange={(e) => handleFilterChange('startDate', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1.5">Sort By</label>
+                <select
+                  value={filters.sortBy}
+                  onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                >
+                  <option value="latest">Latest</option>
+                  <option value="dueDate">Due Date</option>
+                  <option value="priority">Priority</option>
+                </select>
+              </div>
             </div>
           )}
         </div>
-      )}
 
-      {/* Pagination Controls */}
-      {pagination.total > 0 && (
-        <div className="mt-8 bg-white rounded-lg shadow-sm p-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            {/* Pagination Info */}
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-700">
-                Showing <span className="font-semibold">
-                  {tasks.length === 0 ? 0 : (pagination.page - 1) * pagination.limit + 1}
-                </span> to{' '}
-                <span className="font-semibold">
-                  {Math.min(pagination.page * pagination.limit, pagination.total)}
-                </span> of{' '}
-                <span className="font-semibold">{pagination.total}</span> tasks
-              </span>
-              
-              {/* Page Size Selector */}
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-700">Show:</label>
-                <select
-                  value={pagination.limit}
-                  onChange={(e) => handleLimitChange(e.target.value)}
-                  className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  disabled={loading}
-                >
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="50">50</option>
-                </select>
-                <span className="text-sm text-gray-700">per page</span>
-              </div>
-            </div>
+        {/* Loading State */}
+        {loading && <LoadingSkeleton />}
 
-            {/* Pagination Buttons */}
-            {pagination.pages > 1 && (
-              <div className="flex items-center space-x-1">
-                {/* First Page */}
+        {/* Task Lists by Priority */}
+        {!loading && (
+          <div className="space-y-10">
+            {priorities.map((priority) => {
+              const priorityTasks = groupedTasks[priority] || [];
+              if (priorityTasks.length === 0 && (!filters.priority || filters.priority !== priority)) {
+                return null;
+              }
+
+              return (
+                <div key={priority}>
+                  {/* Priority Header */}
+                  <div className="flex items-center mb-5">
+                    <div className={`w-2 h-2 rounded-full ${priorityDotColors[priority]} mr-3`}></div>
+                    <h2 className={`text-xl font-bold ${priorityHeaderColors[priority]}`}>
+                      {priority} Priority
+                    </h2>
+                    <span className="ml-3 px-2.5 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded-full">
+                      {priorityTasks.length}
+                    </span>
+                  </div>
+
+                  {/* Task Grid */}
+                  {priorityTasks.length === 0 ? (
+                    <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+                      <p className="text-gray-500">No tasks in this priority</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {priorityTasks.map((task) => (
+                        <TaskCard
+                          key={task._id}
+                          task={task}
+                          onStatusChange={handleStatusChange}
+                          onDelete={handleDelete}
+                          onEdit={handleEdit}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {tasks.length === 0 && (
+              <div className="text-center py-12 bg-white rounded-lg shadow-sm">
+                <p className="text-gray-500 text-lg">No tasks found</p>
                 <button
-                  onClick={() => handlePageChange(1)}
-                  disabled={pagination.page === 1 || loading}
-                  className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition text-sm"
-                  title="First page"
+                  onClick={() => setIsModalOpen(true)}
+                  className="mt-4 text-blue-600 hover:text-blue-700 font-semibold"
                 >
-                  ««
-                </button>
-
-                {/* Previous Page */}
-                <button
-                  onClick={() => handlePageChange(pagination.page - 1)}
-                  disabled={pagination.page === 1 || loading}
-                  className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition text-sm"
-                  title="Previous page"
-                >
-                  ‹
-                </button>
-
-                {/* Page Numbers */}
-                {getPageNumbers().map((pageNum, index) => {
-                  if (pageNum === '...') {
-                    return (
-                      <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-500">
-                        ...
-                      </span>
-                    );
-                  }
-
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => handlePageChange(pageNum)}
-                      disabled={loading}
-                      className={`px-3 py-2 border rounded-lg transition text-sm ${
-                        pagination.page === pageNum
-                          ? 'bg-blue-600 text-white border-blue-600'
-                          : 'border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-
-                {/* Next Page */}
-                <button
-                  onClick={() => handlePageChange(pagination.page + 1)}
-                  disabled={pagination.page === pagination.pages || loading}
-                  className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition text-sm"
-                  title="Next page"
-                >
-                  ›
-                </button>
-
-                {/* Last Page */}
-                <button
-                  onClick={() => handlePageChange(pagination.pages)}
-                  disabled={pagination.page === pagination.pages || loading}
-                  className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition text-sm"
-                  title="Last page"
-                >
-                  »»
+                  Create your first task
                 </button>
               </div>
             )}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Modals */}
-      <TaskModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedTask(null);
-        }}
-        taskId={selectedTask?._id}
-        onSuccess={fetchTasks}
-      />
+        {/* Pagination Controls */}
+        {pagination.total > 0 && (
+          <div className="mt-8 bg-white rounded-lg shadow-sm p-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-700">
+                  Showing <span className="font-semibold">
+                    {tasks.length === 0 ? 0 : (pagination.page - 1) * pagination.limit + 1}
+                  </span> to{' '}
+                  <span className="font-semibold">
+                    {Math.min(pagination.page * pagination.limit, pagination.total)}
+                  </span> of{' '}
+                  <span className="font-semibold">{pagination.total}</span> tasks
+                </span>
+                
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-700">Show:</label>
+                  <select
+                    value={pagination.limit}
+                    onChange={(e) => handleLimitChange(e.target.value)}
+                    className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    disabled={loading}
+                  >
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                  </select>
+                  <span className="text-sm text-gray-700">per page</span>
+                </div>
+              </div>
 
-      <DeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setTaskToDelete(null);
-        }}
-        onConfirm={confirmDelete}
-        title="Delete Task"
-        message={`Are you sure you want to delete "${taskToDelete?.title}"? This action cannot be undone.`}
-      />
+              {pagination.pages > 1 && (
+                <div className="flex items-center space-x-1">
+                  <button
+                    onClick={() => handlePageChange(1)}
+                    disabled={pagination.page === 1 || loading}
+                    className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition text-sm"
+                    title="First page"
+                  >
+                    ««
+                  </button>
+                  <button
+                    onClick={() => handlePageChange(pagination.page - 1)}
+                    disabled={pagination.page === 1 || loading}
+                    className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition text-sm"
+                    title="Previous page"
+                  >
+                    ‹
+                  </button>
+                  {getPageNumbers().map((pageNum, index) => {
+                    if (pageNum === '...') {
+                      return (
+                        <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-500">
+                          ...
+                        </span>
+                      );
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        disabled={loading}
+                        className={`px-3 py-2 border rounded-lg transition text-sm ${
+                          pagination.page === pageNum
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : 'border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => handlePageChange(pagination.page + 1)}
+                    disabled={pagination.page === pagination.pages || loading}
+                    className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition text-sm"
+                    title="Next page"
+                  >
+                    ›
+                  </button>
+                  <button
+                    onClick={() => handlePageChange(pagination.pages)}
+                    disabled={pagination.page === pagination.pages || loading}
+                    className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition text-sm"
+                    title="Last page"
+                  >
+                    »»
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Modals */}
+        <TaskModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedTask(null);
+          }}
+          taskId={selectedTask?._id}
+          onSuccess={fetchTasks}
+        />
+
+        <DeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setTaskToDelete(null);
+          }}
+          onConfirm={confirmDelete}
+          title="Delete Task"
+          message={`Are you sure you want to delete "${taskToDelete?.title}"? This action cannot be undone.`}
+        />
     </div>
   );
 };
 
 export default Dashboard;
-
