@@ -80,7 +80,8 @@ router.post(
       console.error('Create user error:', error);
       res.status(500).json({
         success: false,
-        message: 'Server error',
+        message: error.message || 'Server error',
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       });
     }
   }
