@@ -65,5 +65,10 @@ export const userAPI = {
   delete: (id) => api.delete(`/users/${id}`),
 };
 
+// Analytics API
+export const analyticsAPI = {
+  getStats: () => api.get('/analytics/dashboard-stats'),
+};
+
 export default api;
 

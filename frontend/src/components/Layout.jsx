@@ -35,6 +35,16 @@ const Layout = ({ children }) => {
                 >
                   Dashboard
                 </Link>
+                <Link
+                  to="/analytics"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive('/analytics')
+                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                      : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
+                  }`}
+                >
+                  Analytics
+                </Link>
                 {isAdmin() && (
                   <Link
                     to="/users"
