@@ -69,7 +69,11 @@ const TaskDetails = () => {
     }
   };
 
-  const canEdit = isAdmin() || (task && task.assignedTo._id === user?._id);
+  const canEdit = isAdmin() || (task && (
+    Array.isArray(task.assignedTo) 
+      ? task.assignedTo.some(u => u._id === user?._id)
+      : task.assignedTo?._id === user?._id
+  ));
 
   if (loading) {
     return (
@@ -150,8 +154,21 @@ const TaskDetails = () => {
 
           <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-4">
             <h3 className="text-sm font-medium text-slate-500 mb-1">Assigned To</h3>
-            <p className="text-lg font-semibold text-slate-200">{task.assignedTo.name}</p>
-            <p className="text-sm text-slate-400">{task.assignedTo.email}</p>
+            {Array.isArray(task.assignedTo) && task.assignedTo.length > 0 ? (
+              <div className="space-y-2">
+                {task.assignedTo.map(user => (
+                  <div key={user._id} className="border-b border-slate-700/50 last:border-0 pb-1 last:pb-0">
+                    <p className="text-lg font-semibold text-slate-200">{user.name}</p>
+                    <p className="text-sm text-slate-400">{user.email}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+                <>
+                  <p className="text-lg font-semibold text-slate-200">{task.assignedTo?.name || 'Unassigned'}</p>
+                  <p className="text-sm text-slate-400">{task.assignedTo?.email}</p>
+                </>
+            )}
           </div>
 
           <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-4">

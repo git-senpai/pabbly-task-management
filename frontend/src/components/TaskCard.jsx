@@ -179,7 +179,7 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
               {format(new Date(task.dueDate), "MMM dd, yyyy")}
             </span>
           </div>
-          {task.assignedTo && (
+          {task.assignedTo && task.assignedTo.length > 0 && (
             <div className="flex items-center">
               <svg
                 className="w-3.5 h-3.5 mr-1.5"
@@ -195,7 +195,11 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
                 />
               </svg>
               <span className="font-medium text-slate-400">
-                {task.assignedTo.name}
+                {Array.isArray(task.assignedTo) && task.assignedTo.length > 1
+                  ? `${task.assignedTo.length} users`
+                  : Array.isArray(task.assignedTo) 
+                    ? task.assignedTo[0]?.name 
+                    : task.assignedTo?.name}
               </span>
             </div>
           )}

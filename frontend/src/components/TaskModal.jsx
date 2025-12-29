@@ -12,7 +12,7 @@ const TaskModal = ({ isOpen, onClose, taskId, onSuccess }) => {
     description: '',
     dueDate: '',
     priority: 'Medium',
-    assignedTo: '',
+    assignedTo: [],
   });
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const TaskModal = ({ isOpen, onClose, taskId, onSuccess }) => {
           description: '',
           dueDate: '',
           priority: 'Medium',
-          assignedTo: isAdmin() ? '' : (user?._id || ''),
+          assignedTo: isAdmin() ? [] : (user?._id ? [user._id] : []),
         });
       }
     }
@@ -49,12 +49,18 @@ const TaskModal = ({ isOpen, onClose, taskId, onSuccess }) => {
     try {
       const response = await taskAPI.getById(taskId);
       const task = response.data.data;
+      // Handle legacy single assignee if necessary, though backend migrates nicely usually
+      // Ideally backend returns array now.
+      const assignedIds = Array.isArray(task.assignedTo) 
+        ? task.assignedTo.map(u => u._id) 
+        : (task.assignedTo ? [task.assignedTo._id] : []);
+        
       setFormData({
         title: task.title,
         description: task.description || '',
         dueDate: formatDateForInput(task.dueDate),
         priority: task.priority,
-        assignedTo: task.assignedTo._id,
+        assignedTo: assignedIds,
       });
     } catch (error) {
       toast.error('Failed to load task');
@@ -188,20 +194,33 @@ const TaskModal = ({ isOpen, onClose, taskId, onSuccess }) => {
                 Assign To *
               </label>
               {isAdmin() ? (
-                <select
-                  name="assignedTo"
-                  required
-                  value={formData.assignedTo}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                >
-                  <option value="">Select user</option>
-                  {users.map((user) => (
-                    <option key={user._id} value={user._id}>
-                      {user.name} ({user.email})
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <div className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white max-h-32 overflow-y-auto">
+                    {users.map((user) => (
+                      <label key={user._id} className="flex items-center space-x-3 py-1 cursor-pointer hover:bg-slate-700/50 rounded px-2 -mx-2">
+                        <input
+                          type="checkbox"
+                          value={user._id}
+                          checked={formData.assignedTo.includes(user._id)}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setFormData(prev => ({
+                              ...prev,
+                              assignedTo: e.target.checked
+                                ? [...prev.assignedTo, value]
+                                : prev.assignedTo.filter(id => id !== value)
+                            }));
+                          }}
+                          className="form-checkbox h-4 w-4 text-indigo-600 border-slate-500 rounded focus:ring-indigo-500 bg-slate-700"
+                        />
+                        <span className="text-sm">{user.name} ({user.email})</span>
+                      </label>
+                    ))}
+                  </div>
+                  {formData.assignedTo.length === 0 && (
+                    <p className="text-xs text-red-500 mt-1">Please select at least one user</p>
+                  )}
+                </div>
               ) : (
                 <input
                   type="text"

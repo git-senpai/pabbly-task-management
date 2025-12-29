@@ -28,11 +28,11 @@ const taskSchema = new mongoose.Schema({
     default: 'Pending',
     required: true,
   },
-  assignedTo: {
+  assignedTo: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: [true, 'Please assign the task to a user'],
-  },
+    required: [true, 'Please assign the task to at least one user'],
+  }],
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

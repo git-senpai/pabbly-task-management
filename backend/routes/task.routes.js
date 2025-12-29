@@ -160,7 +160,8 @@ router.post(
     body('description').optional().trim(),
     body('dueDate').isISO8601().withMessage('Please provide a valid due date'),
     body('priority').isIn(['Low', 'Medium', 'High', 'Urgent']).withMessage('Invalid priority'),
-    body('assignedTo').isMongoId().withMessage('Please provide a valid user ID'),
+    body('assignedTo').isArray().withMessage('Please provide an array of user IDs'),
+    body('assignedTo.*').isMongoId().withMessage('Invalid user ID'),
   ],
   async (req, res) => {
     try {
@@ -174,21 +175,24 @@ router.post(
 
       const { title, description, dueDate, priority, assignedTo } = req.body;
 
-      // Check if assigned user exists
-      const assignedUser = await User.findById(assignedTo);
-      if (!assignedUser || assignedUser.isDeleted) {
+      // Check if all assigned users exist
+      const assignedUsers = await User.find({ _id: { $in: assignedTo }, isDeleted: false });
+      if (assignedUsers.length !== assignedTo.length) {
         return res.status(400).json({
           success: false,
-          message: 'Assigned user not found',
+          message: 'One or more assigned users not found',
         });
       }
 
-      // Non-admin users can only assign tasks to themselves
-      if (req.user.role !== 'admin' && assignedTo !== req.user._id.toString()) {
-        return res.status(403).json({
-          success: false,
-          message: 'You can only assign tasks to yourself',
-        });
+      // Non-admin users can only assign tasks to themselves (and strictly themselves)
+      if (req.user.role !== 'admin') {
+        const tryingToAssignOthers = assignedTo.some(id => id !== req.user._id.toString());
+         if (tryingToAssignOthers) {
+          return res.status(403).json({
+            success: false,
+            message: 'You can only assign tasks to yourself',
+          });
+         }
       }
 
       const task = await Task.create({
@@ -233,7 +237,8 @@ router.put(
     body('description').optional().trim(),
     body('dueDate').optional().isISO8601().withMessage('Please provide a valid due date'),
     body('priority').optional().isIn(['Low', 'Medium', 'High', 'Urgent']).withMessage('Invalid priority'),
-    body('assignedTo').optional().isMongoId().withMessage('Please provide a valid user ID'),
+    body('assignedTo').optional().isArray().withMessage('Please provide an array of user IDs'),
+    body('assignedTo.*').optional().isMongoId().withMessage('Invalid user ID'),
   ],
   async (req, res) => {
     try {
@@ -258,7 +263,9 @@ router.put(
       }
 
       // Check authorization: users can only update their assigned tasks
-      if (req.user.role !== 'admin' && task.assignedTo.toString() !== req.user._id.toString()) {
+      // Since assignedTo is array, we check if user ID is in the array
+      const isAssigned = task.assignedTo.some(id => id.toString() === req.user._id.toString());
+      if (req.user.role !== 'admin' && !isAssigned) {
         return res.status(403).json({
           success: false,
           message: 'Not authorized to update this task',
@@ -267,22 +274,25 @@ router.put(
 
       const { title, description, dueDate, priority, assignedTo } = req.body;
 
-      // Check if assigned user exists (if being changed)
+      // Check if assigned users exist (if being changed)
       if (assignedTo) {
-        const assignedUser = await User.findById(assignedTo);
-        if (!assignedUser || assignedUser.isDeleted) {
+         const assignedUsers = await User.find({ _id: { $in: assignedTo }, isDeleted: false });
+         if (assignedUsers.length !== assignedTo.length) {
           return res.status(400).json({
             success: false,
-            message: 'Assigned user not found',
+            message: 'One or more assigned users not found',
           });
         }
 
         // Non-admin users can only assign tasks to themselves
-        if (req.user.role !== 'admin' && assignedTo !== req.user._id.toString()) {
-          return res.status(403).json({
-            success: false,
-            message: 'You can only assign tasks to yourself',
-          });
+        if (req.user.role !== 'admin') {
+           const tryingToAssignOthers = assignedTo.some(id => id !== req.user._id.toString());
+           if (tryingToAssignOthers) {
+            return res.status(403).json({
+              success: false,
+              message: 'You can only assign tasks to yourself',
+            });
+           }
         }
       }
 
