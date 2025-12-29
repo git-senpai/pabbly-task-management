@@ -28,7 +28,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-slate-950 border-t border-slate-800 text-slate-400">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand Section */}
@@ -39,10 +39,10 @@ const Footer = () => {
             transition={{ duration: 0.6 }}
             className="lg:col-span-2"
           >
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 inline-block">
+            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-4 inline-block">
               TaskFlow
             </Link>
-            <p className="text-gray-400 mb-4 max-w-md">
+            <p className="text-slate-500 mb-4 max-w-md">
               The modern task management system that helps teams and individuals stay organized, productive, and focused on what matters most.
             </p>
             <div className="flex space-x-4">
@@ -55,7 +55,7 @@ const Footer = () => {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.2, y: -2 }}
-                  className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition"
+                  className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-slate-700 hover:text-white transition shadow-sm border border-slate-700/50"
                 >
                   <span className="text-sm">{social === 'twitter' ? '🐦' : social === 'github' ? '💻' : social === 'linkedin' ? '💼' : '📘'}</span>
                 </motion.a>
@@ -78,7 +78,7 @@ const Footer = () => {
                   <li key={linkIndex}>
                     <a
                       href={link.href}
-                      className="text-gray-400 hover:text-white transition hover:translate-x-1 inline-block"
+                      className="text-slate-500 hover:text-indigo-400 transition hover:translate-x-1 inline-block"
                     >
                       {link.name}
                     </a>
@@ -95,19 +95,19 @@ const Footer = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-8 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"
+          className="mt-8 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center"
         >
-          <p className="text-gray-400 text-sm">
+          <p className="text-slate-600 text-sm">
             © {currentYear} TaskFlow. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#privacy" className="text-gray-400 hover:text-white text-sm transition">
+            <a href="#privacy" className="text-slate-600 hover:text-slate-400 text-sm transition">
               Privacy Policy
             </a>
-            <a href="#terms" className="text-gray-400 hover:text-white text-sm transition">
+            <a href="#terms" className="text-slate-600 hover:text-slate-400 text-sm transition">
               Terms of Service
             </a>
-            <a href="#cookies" className="text-gray-400 hover:text-white text-sm transition">
+            <a href="#cookies" className="text-slate-600 hover:text-slate-400 text-sm transition">
               Cookie Policy
             </a>
           </div>

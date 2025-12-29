@@ -3,23 +3,23 @@ import { Link } from "react-router-dom";
 import { format } from "date-fns";
 
 const priorityColors = {
-  Low: "border-green-300",
-  Medium: "border-blue-300",
-  High: "border-orange-300",
-  Urgent: "border-red-300",
+  Low: "border-green-500/50",
+  Medium: "border-blue-500/50",
+  High: "border-orange-500/50",
+  Urgent: "border-red-500/50",
 };
 
 const priorityBadgeColors = {
-  Low: "bg-green-50 text-green-700 border-green-200",
-  Medium: "bg-blue-50 text-blue-700 border-blue-200",
-  High: "bg-orange-50 text-orange-700 border-orange-200",
-  Urgent: "bg-red-50 text-red-700 border-red-200",
+  Low: "bg-green-500/10 text-green-400 border-green-500/20",
+  Medium: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  High: "bg-orange-500/10 text-orange-400 border-orange-500/20",
+  Urgent: "bg-red-500/10 text-red-400 border-red-500/20",
 };
 
 const statusBadgeColors = {
-  Pending: "bg-gray-50 text-gray-700 border-gray-200",
-  "In Progress": "bg-amber-50 text-amber-700 border-amber-200",
-  Completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  Pending: "bg-slate-700/50 text-slate-300 border-slate-600",
+  "In Progress": "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  Completed: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
 };
 
 const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
@@ -29,14 +29,14 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border-l-4 ${
+      className={`bg-slate-800/80 rounded-lg shadow-sm border-l-4 ${
         priorityColors[task.priority]
-      } p-5 hover:shadow-md transition-all h-full flex flex-col`}
+      } p-5 hover:shadow-md hover:bg-slate-800 transition-all h-full flex flex-col border-y border-r border-slate-700/50 backdrop-blur-sm`}
     >
       {/* Header with Title and Menu */}
       <div className="flex justify-between items-start mb-3">
         <Link to={`/tasks/${task._id}`} className="flex-1 pr-2">
-          <h3 className="text-base font-semibold text-gray-900 hover:text-blue-600 transition leading-tight">
+          <h3 className="text-base font-semibold text-white hover:text-indigo-400 transition leading-tight">
             {task.title}
           </h3>
         </Link>
@@ -49,7 +49,7 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
               e.stopPropagation();
               setShowMenu(!showMenu);
             }}
-            className="text-gray-400 hover:text-gray-600 transition p-1"
+            className="text-slate-500 hover:text-slate-300 transition p-1"
             title="More options"
           >
             <svg
@@ -73,7 +73,7 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
                 className="fixed inset-0 z-10"
                 onClick={() => setShowMenu(false)}
               />
-              <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-20 py-1">
+              <div className="absolute right-0 mt-1 w-40 bg-slate-800 rounded-lg shadow-xl border border-slate-700 z-20 py-1 overflow-hidden">
                 {onEdit && (
                   <button
                     onClick={(e) => {
@@ -82,7 +82,7 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
                       onEdit(task);
                       setShowMenu(false);
                     }}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                    className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white flex items-center transition"
                   >
                     <svg
                       className="w-4 h-4 mr-2"
@@ -108,7 +108,7 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
                       onDelete(task);
                       setShowMenu(false);
                     }}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
+                    className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 flex items-center transition"
                   >
                     <svg
                       className="w-4 h-4 mr-2"
@@ -134,7 +134,7 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
 
       {/* Description */}
       {task.description && (
-        <p className="text-sm text-gray-600 mb-4 line-clamp-2 grow">
+        <p className="text-sm text-slate-400 mb-4 line-clamp-2 grow">
           {task.description}
         </p>
       )}
@@ -160,7 +160,7 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
         </div>
 
         {/* Due Date and Assigned To */}
-        <div className="flex items-center justify-between text-xs text-gray-500">
+        <div className="flex items-center justify-between text-xs text-slate-500">
           <div className="flex items-center">
             <svg
               className="w-3.5 h-3.5 mr-1.5"
@@ -175,7 +175,7 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
                 d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
               />
             </svg>
-            <span className={isOverdue ? "text-red-600 font-medium" : ""}>
+            <span className={isOverdue ? "text-red-400 font-medium" : ""}>
               {format(new Date(task.dueDate), "MMM dd, yyyy")}
             </span>
           </div>
@@ -194,7 +194,7 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
                   d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
                 />
               </svg>
-              <span className="font-medium text-gray-700">
+              <span className="font-medium text-slate-400">
                 {task.assignedTo.name}
               </span>
             </div>
