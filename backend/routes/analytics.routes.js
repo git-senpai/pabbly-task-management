@@ -44,7 +44,7 @@ router.get('/dashboard-stats', async (req, res) => {
       { $group: { _id: '$priority', count: { $sum: 1 } } }
     ]);
 
-    const allowedPriorities = ['Low', 'Medium', 'High', 'Urgent'];
+    const allowedPriorities = ['Low', 'Medium', 'High'];
     const priorityData = allowedPriorities.map(priority => {
       const found = priorityStats.find(p => p._id === priority);
       return { name: priority, value: found ? found.count : 0 };

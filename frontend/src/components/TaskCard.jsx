@@ -6,14 +6,12 @@ const priorityColors = {
   Low: "border-green-500/50",
   Medium: "border-blue-500/50",
   High: "border-orange-500/50",
-  Urgent: "border-red-500/50",
 };
 
 const priorityBadgeColors = {
   Low: "bg-green-500/10 text-green-400 border-green-500/20",
   Medium: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   High: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  Urgent: "bg-red-500/10 text-red-400 border-red-500/20",
 };
 
 const statusBadgeColors = {
@@ -22,7 +20,7 @@ const statusBadgeColors = {
   Completed: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
 };
 
-const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
+const TaskCard = ({ task, onStatusChange, onDelete, onEdit, compact = false }) => {
   const [showMenu, setShowMenu] = useState(false);
   const isOverdue =
     new Date(task.dueDate) < new Date() && task.status !== "Completed";
@@ -31,7 +29,7 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
     <div
       className={`bg-slate-800/80 rounded-lg shadow-sm border-l-4 ${
         priorityColors[task.priority]
-      } p-5 hover:shadow-md hover:bg-slate-800 transition-all h-full flex flex-col border-y border-r border-slate-700/50 backdrop-blur-sm`}
+      } ${compact ? 'p-3' : 'p-5'} hover:shadow-md hover:bg-slate-800 transition-all h-full flex flex-col border-y border-r border-slate-700/50 backdrop-blur-sm group-hover:scale-[1.02] duration-200`}
     >
       {/* Header with Title and Menu */}
       <div className="flex justify-between items-start mb-3">
@@ -144,14 +142,14 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit }) => {
         {/* Priority and Status Badges */}
         <div className="flex items-center gap-2 flex-wrap">
           <span
-            className={`px-2.5 py-1 text-xs font-medium rounded-full border ${
+            className={`${compact ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-xs'} font-medium rounded-full border ${
               priorityBadgeColors[task.priority]
             }`}
           >
             {task.priority}
           </span>
           <span
-            className={`px-2.5 py-1 text-xs font-medium rounded-full border ${
+            className={`${compact ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-xs'} font-medium rounded-full border ${
               statusBadgeColors[task.status]
             }`}
           >

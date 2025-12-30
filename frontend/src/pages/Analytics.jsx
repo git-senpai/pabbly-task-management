@@ -20,7 +20,6 @@ const PRIORITY_COLORS = {
   Low: '#10b981',
   Medium: '#3b82f6',
   High: '#f97316',
-  Urgent: '#ef4444',
 };
 
 const Analytics = () => {
