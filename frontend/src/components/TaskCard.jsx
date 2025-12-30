@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
+import { useAuth } from "../context/AuthContext";
 
 const priorityColors = {
   Low: "border-[#10B981]",
@@ -21,6 +22,7 @@ const statusBadgeColors = {
 };
 
 const TaskCard = ({ task, onStatusChange, onDelete, onEdit, compact = false }) => {
+  const { isAdmin } = useAuth();
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const isOverdue =
@@ -88,7 +90,7 @@ const TaskCard = ({ task, onStatusChange, onDelete, onEdit, compact = false }) =
                 }}
               />
               <div className="absolute right-0 mt-1 w-48 bg-white border-2 border-black shadow-[4px_4px_0_0_#000] z-20 py-2">
-                {onEdit && (
+                {onEdit && isAdmin() && (
                   <button
                     onClick={(e) => {
                       e.preventDefault();

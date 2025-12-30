@@ -130,7 +130,8 @@ router.get('/:id', async (req, res) => {
     }
 
     // Check authorization: users can only see their assigned tasks
-    if (req.user.role !== 'admin' && task.assignedTo._id.toString() !== req.user._id.toString()) {
+    const isAssigned = task.assignedTo.some(u => u._id.toString() === req.user._id.toString());
+    if (req.user.role !== 'admin' && !isAssigned) {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to access this task',
@@ -354,7 +355,8 @@ router.patch(
       }
 
       // Check authorization: users can only update their assigned tasks
-      if (req.user.role !== 'admin' && task.assignedTo.toString() !== req.user._id.toString()) {
+      const isAssigned = task.assignedTo.some(id => id.toString() === req.user._id.toString());
+      if (req.user.role !== 'admin' && !isAssigned) {
         return res.status(403).json({
           success: false,
           message: 'Not authorized to update this task',
@@ -409,7 +411,8 @@ router.delete('/:id', async (req, res) => {
     }
 
     // Check authorization: users can only delete their assigned tasks
-    if (req.user.role !== 'admin' && task.assignedTo.toString() !== req.user._id.toString()) {
+    const isAssigned = task.assignedTo.some(id => id.toString() === req.user._id.toString());
+    if (req.user.role !== 'admin' && !isAssigned) {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to delete this task',

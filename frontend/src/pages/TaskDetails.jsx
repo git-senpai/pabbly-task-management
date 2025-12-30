@@ -114,12 +114,14 @@ const TaskDetails = () => {
           </div>
           {canEdit && (
             <div className="flex space-x-3">
-              <button
-                onClick={() => setIsEditModalOpen(true)}
-                className="px-4 py-2 bg-[#8B5CF6] text-white font-black uppercase border-2 border-black hover:bg-[#7C3AED] hover:shadow-[4px_4px_0_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all active:translate-x-0 active:translate-y-0 active:shadow-none"
-              >
-                Edit
-              </button>
+              {isAdmin() && (
+                <button
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="px-4 py-2 bg-[#8B5CF6] text-white font-black uppercase border-2 border-black hover:bg-[#7C3AED] hover:shadow-[4px_4px_0_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all active:translate-x-0 active:translate-y-0 active:shadow-none"
+                >
+                  Edit
+                </button>
+              )}
               <button
                 onClick={handleDelete}
                 className="px-4 py-2 bg-[#EF4444] text-white font-black uppercase border-2 border-black hover:bg-red-600 hover:shadow-[4px_4px_0_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all active:translate-x-0 active:translate-y-0 active:shadow-none"
