@@ -11,7 +11,7 @@ A modern, production-ready Task Management System built with MongoDB, Express.js
 - ✅ **Task Editing** - Update task details with form validation
 - ✅ **Task Deletion** - Soft delete with confirmation modal
 - ✅ **Status Management** - Change status (Pending → In Progress → Completed) with quick toggle
-- ✅ **Priority Management** - Color-coded priority system (Low/Medium/High/Urgent)
+- ✅ **Priority Management** - Color-coded priority system (Low/Medium/High)
 - ✅ **User Authentication** - JWT-based authentication with password hashing
 - ✅ **Role-based Access** - Admin and User roles with appropriate permissions
 - ✅ **Advanced Filtering** - Filter by priority, status, and due date range
@@ -124,8 +124,7 @@ pabbly/
 
 - **Low Priority**: 🟢 Green
 - **Medium Priority**: 🔵 Blue
-- **High Priority**: 🟠 Orange
-- **Urgent Priority**: 🔴 Red
+- **High Priority**: 🔴 Red
 
 ## 📡 API Endpoints
 
