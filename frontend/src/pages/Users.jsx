@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Loader from '../components/Loader';
 import { userAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import DeleteModal from '../components/DeleteModal';
@@ -69,55 +70,53 @@ const Users = () => {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">User Management</h1>
-          <p className="text-slate-400 mt-1">Manage system users</p>
+          <h1 className="text-4xl font-black italic text-black uppercase tracking-tighter drop-shadow-[2px_2px_0_#fff]">User Management</h1>
+          <p className="text-gray-600 font-bold uppercase tracking-widest text-xs mt-1">Manage system users</p>
         </div>
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-lg shadow-indigo-500/20"
+          className="px-6 py-3 bg-[#FBBF24] text-black font-black uppercase tracking-wider border-2 border-black hover:bg-[#F59E0B] hover:shadow-[4px_4px_0_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all active:translate-x-0 active:translate-y-0 active:shadow-none rounded-none"
         >
           + Add User
         </button>
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
-        </div>
+        <Loader />
       ) : (
-        <div className="bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
-          <table className="min-w-full divide-y divide-slate-800">
-            <thead className="bg-slate-800/50">
+        <div className="bg-white border-2 border-black shadow-[4px_4px_0_0_#000]">
+          <table className="min-w-full divide-y-2 divide-black">
+            <thead className="bg-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider border-r-2 border-black">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider border-r-2 border-black">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider border-r-2 border-black">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-slate-900 divide-y divide-slate-800">
+            <tbody className="bg-white divide-y-2 divide-black">
               {users.map((user) => (
-                <tr key={user._id} className="hover:bg-slate-800/50 transition">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-white">{user.name}</div>
+                <tr key={user._id} className="hover:bg-gray-50 transition">
+                  <td className="px-6 py-4 whitespace-nowrap border-r-2 border-black">
+                    <div className="text-sm font-bold text-black uppercase">{user.name}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-slate-400">{user.email}</div>
+                  <td className="px-6 py-4 whitespace-nowrap border-r-2 border-black">
+                    <div className="text-sm text-gray-600 font-mono font-bold uppercase">{user.email}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap border-r-2 border-black">
                     <span
-                      className={`px-2 py-1 text-xs font-semibold rounded-full border ${
+                      className={`px-2 py-1 text-xs font-black uppercase border-2 border-black ${
                         user.role === 'admin'
-                          ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-                          : 'bg-slate-700/50 text-slate-300 border-slate-600'
+                          ? 'bg-[#C4B5FD] text-black'
+                          : 'bg-gray-200 text-black'
                       }`}
                     >
                       {user.role}
@@ -127,13 +126,13 @@ const Users = () => {
                     {user._id !== currentUser?._id && (
                       <button
                         onClick={() => handleDelete(user)}
-                        className="text-red-400 hover:text-red-300 transition"
+                        className="text-[#EF4444] hover:text-white hover:bg-[#EF4444] px-2 py-1 font-black uppercase transition border-2 border-transparent hover:border-black"
                       >
                         Delete
                       </button>
                     )}
                     {user._id === currentUser?._id && (
-                      <span className="text-slate-500 italic">Current User</span>
+                      <span className="text-gray-400 font-black italic uppercase border-2 border-gray-200 px-2 py-1">Current User</span>
                     )}
                   </td>
                 </tr>
@@ -142,8 +141,8 @@ const Users = () => {
           </table>
 
           {users.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-slate-500">No users found</p>
+            <div className="text-center py-12 border-t-2 border-black">
+              <p className="text-gray-500 font-bold uppercase tracking-widest">No users found</p>
             </div>
           )}
         </div>
@@ -151,26 +150,26 @@ const Users = () => {
 
       {/* Create User Modal */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl shadow-2xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">Create New User</h2>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_#000] max-w-md w-full p-6 transition-transform">
+            <div className="flex justify-between items-center mb-6 border-b-2 border-black pb-4">
+              <h2 className="text-2xl font-black italic text-black uppercase tracking-wider">Create New User</h2>
               <button
                 onClick={() => {
                   setIsCreateModalOpen(false);
                   setFormData({ name: '', email: '', password: '', role: 'user' });
                 }}
-                className="text-slate-400 hover:text-white transition"
+                className="text-black hover:text-white transition hover:bg-[#EF4444] p-1 border-2 border-transparent hover:border-black"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
             <form onSubmit={handleCreateUser} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-black text-black mb-2 uppercase">
                   Name *
                 </label>
                 <input
@@ -178,13 +177,13 @@ const Users = () => {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none placeholder-slate-500"
-                  placeholder="Enter user name"
+                  className="w-full px-4 py-2 bg-white border-2 border-black text-black focus:outline-none focus:shadow-[4px_4px_0_0_#000] transition-all placeholder-gray-400 font-bold rounded-none"
+                  placeholder="ENTER USER NAME"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-black text-black mb-2 uppercase">
                   Email *
                 </label>
                 <input
@@ -192,13 +191,13 @@ const Users = () => {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none placeholder-slate-500"
-                  placeholder="Enter user email"
+                  className="w-full px-4 py-2 bg-white border-2 border-black text-black focus:outline-none focus:shadow-[4px_4px_0_0_#000] transition-all placeholder-gray-400 font-bold rounded-none"
+                  placeholder="ENTER USER EMAIL"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-black text-black mb-2 uppercase">
                   Password *
                 </label>
                 <input
@@ -207,42 +206,42 @@ const Users = () => {
                   minLength={6}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none placeholder-slate-500"
-                  placeholder="Enter password (min 6 characters)"
+                  className="w-full px-4 py-2 bg-white border-2 border-black text-black focus:outline-none focus:shadow-[4px_4px_0_0_#000] transition-all placeholder-gray-400 font-bold rounded-none"
+                  placeholder="ENTER PASSWORD (MIN 6 CHARS)"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-black text-black mb-2 uppercase">
                   Role *
                 </label>
                 <select
                   required
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 bg-white border-2 border-black text-black focus:outline-none focus:shadow-[4px_4px_0_0_#000] transition-all font-bold rounded-none"
                 >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
+                  <option value="user">USER</option>
+                  <option value="admin">ADMIN</option>
                 </select>
               </div>
 
-              <div className="flex justify-end space-x-3 pt-4">
+              <div className="flex justify-end space-x-4 pt-6">
                 <button
                   type="button"
                   onClick={() => {
                     setIsCreateModalOpen(false);
                     setFormData({ name: '', email: '', password: '', role: 'user' });
                   }}
-                  className="px-6 py-2 border border-slate-700 rounded-lg text-slate-300 hover:bg-slate-800 transition"
+                  className="px-6 py-2 border-2 border-black text-black font-black uppercase hover:bg-gray-100 hover:shadow-[2px_2px_0_0_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all rounded-none"
                 >
-                  Cancel
+                  CANCEL
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-lg shadow-indigo-500/20"
+                  className="px-6 py-2 bg-[#10B981] text-black font-black uppercase border-2 border-black hover:bg-[#059669] hover:shadow-[4px_4px_0_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all active:translate-x-0 active:translate-y-0 active:shadow-none rounded-none"
                 >
-                  Create User
+                  CREATE USER
                 </button>
               </div>
             </form>

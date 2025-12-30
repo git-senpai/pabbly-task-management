@@ -61,144 +61,112 @@ const Landing = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#FFFDF5] text-black selection:bg-yellow-300 selection:text-black font-mono">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-slate-900/80 backdrop-blur-md shadow-lg border-b border-slate-800/50 z-50">
+      <nav className="fixed top-0 w-full bg-white border-b-2 border-black z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                TaskFlow
-              </Link>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center space-x-4"
-            >
+          <div className="flex justify-between items-center h-20">
+            <Link to="/" className="text-3xl font-black italic tracking-tighter uppercase bg-yellow-300 border-2 border-black px-2 shadow-[4px_4px_0_0_#000] hover:-translate-y-1 transition-transform">
+              TaskFlow
+            </Link>
+            
+            <div className="flex items-center space-x-4">
               {user ? (
                 <Link
                   to="/dashboard"
-                  className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20"
+                  className="neo-btn bg-[#8B5CF6] text-white hover:bg-[#7C3AED] px-8"
                 >
-                  Go to Dashboard
+                  DASHBOARD
                 </Link>
               ) : (
                 <>
                   <Link
                     to="/login"
-                    className="px-6 py-2 text-slate-300 font-semibold hover:text-white transition"
+                    className="font-bold hover:underline decoration-2 underline-offset-4 uppercase"
                   >
                     Sign In
                   </Link>
                   <Link
                     to="/register"
-                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20"
+                    className="neo-btn bg-[#FBBF24] text-black hover:bg-[#F59E0B]"
                   >
-                    Get Started
+                    GET STARTED
                   </Link>
                 </>
               )}
-            </motion.div>
+            </div>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        {/* Background blobs */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b-2 border-black">
+        <div className="absolute top-20 right-0 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
+        <div className="absolute top-20 left-0 w-96 h-96 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-32 left-20 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000" />
 
-        <div className="max-w-7xl mx-auto relative z-10">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="text-center"
+        <div className="max-w-7xl mx-auto relative z-10 text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-6xl md:text-8xl font-black mb-6 uppercase tracking-tighter leading-none"
           >
-            <motion.h1
-              variants={itemVariants}
-              className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight"
+            Manage Tasks
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-[4px_4px_0_#000]">
+              LIKE A BOSS
+            </span>
+          </motion.h1>
+          
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-xl md:text-2xl font-bold text-slate-700 mb-10 max-w-3xl mx-auto border-2 border-black bg-white p-4 shadow-[4px_4px_0_0_#000]"
+          >
+            Stop drowning in chaos. Organize your life with the most stylish task manager on the web.
+          </motion.p>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+          >
+            <Link
+              to={user ? "/dashboard" : "/register"}
+              className="px-8 py-4 bg-[#FF6B6B] text-black font-black text-xl border-2 border-black shadow-[8px_8px_0_0_#000] hover:shadow-[12px_12px_0_0_#000] hover:-translate-y-1 transition-all uppercase"
             >
-              Manage Your Tasks
-              <br />
-              <span className="text-indigo-400">
-                Like a Pro
-              </span>
-            </motion.h1>
-            <motion.p
-              variants={itemVariants}
-              className="text-xl md:text-2xl text-slate-400 mb-8 max-w-3xl mx-auto leading-relaxed"
-            >
-              Streamline your workflow, boost productivity, and achieve your goals with our powerful task management system.
-            </motion.p>
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            >
-              {user ? (
-                <Link
-                  to="/dashboard"
-                  className="px-8 py-4 bg-indigo-600 text-white rounded-xl font-semibold text-lg hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/25 transform hover:scale-105"
-                >
-                  Go to Dashboard
-                </Link>
-              ) : (
-                <>
-                  <Link
-                    to="/register"
-                    className="px-8 py-4 bg-indigo-600 text-white rounded-xl font-semibold text-lg hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/25 transform hover:scale-105"
-                  >
-                    Get Started Free
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="px-8 py-4 bg-slate-800 text-slate-200 rounded-xl font-semibold text-lg hover:bg-slate-700 transition shadow-lg border border-slate-700"
-                  >
-                    Sign In
-                  </Link>
-                </>
-              )}
-            </motion.div>
+              {user ? "Go to Dashboard" : "Start For Free"}
+            </Link>
+            {!user && (
+              <Link
+                to="/login"
+                className="px-8 py-4 bg-white text-black font-black text-xl border-2 border-black shadow-[8px_8px_0_0_#000] hover:shadow-[12px_12px_0_0_#000] hover:-translate-y-1 transition-all uppercase"
+              >
+                Log In
+              </Link>
+            )}
           </motion.div>
 
-          {/* Hero Image/Illustration */}
+          {/* Hero Visual */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-16 relative"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6 }}
+            className="mt-20 relative max-w-5xl mx-auto"
           >
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8 max-w-5xl mx-auto backdrop-blur-sm">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {['Urgent', 'High', 'Medium', 'Low'].map((priority, index) => (
-                  <motion.div
-                    key={priority}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.6 + index * 0.1 }}
-                    className={`p-4 rounded-lg border-l-4 ${
-                      priority === 'Urgent' ? 'border-red-500 bg-red-500/10' :
-                      priority === 'High' ? 'border-orange-500 bg-orange-500/10' :
-                      priority === 'Medium' ? 'border-blue-500 bg-blue-500/10' :
-                      'border-emerald-500 bg-emerald-500/10'
-                    }`}
-                  >
-                    <div className={`font-semibold mb-2 ${
-                       priority === 'Urgent' ? 'text-red-400' :
-                       priority === 'High' ? 'text-orange-400' :
-                       priority === 'Medium' ? 'text-blue-400' :
-                       'text-emerald-400'
-                    }`}>{priority}</div>
-                    <div className="text-sm text-slate-300">Sample Task</div>
-                    <div className="text-xs text-slate-500 mt-2">Due: Today</div>
-                  </motion.div>
+            <div className="bg-white border-2 border-black p-8 shadow-[12px_12px_0_0_#000]">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  { label: 'HIGH', color: 'bg-[#EF4444]', text: 'text-white' },
+                  { label: 'MEDIUM', color: 'bg-[#3B82F6]', text: 'text-white' },
+                  { label: 'LOW', color: 'bg-[#10B981]', text: 'text-black' }
+                ].map((item, index) => (
+                  <div key={item.label} className={`${item.color} border-2 border-black p-4 shadow-[4px_4px_0_0_#000] transform hover:-rotate-2 transition-transform`}>
+                    <div className={`font-black text-lg ${item.text}`}>{item.label}</div>
+                    <div className={`text-sm font-bold opacity-90 ${item.text}`}>Task #{index + 1}</div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -207,121 +175,70 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-900/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#A7F3D0] border-b-2 border-black">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Everything You Need
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-black text-black mb-4 uppercase drop-shadow-[4px_4px_0_#fff]">
+              Why Use TaskFlow?
             </h2>
-            <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-              Powerful features designed to help you stay organized and productive
-            </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                variants={itemVariants}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-slate-800/50 p-6 rounded-xl shadow-lg hover:shadow-xl transition border border-slate-700/50 backdrop-blur-sm"
+                whileHover={{ scale: 1.02, rotate: 1 }}
+                className="bg-white p-8 border-2 border-black shadow-[8px_8px_0_0_#000]"
               >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-                <p className="text-slate-400">{feature.description}</p>
+                <div className="text-5xl mb-6 bg-yellow-300 w-16 h-16 flex items-center justify-center border-2 border-black rounded-full shadow-[2px_2px_0_0_#000]">{feature.icon}</div>
+                <h3 className="text-2xl font-black text-black mb-3 uppercase">{feature.title}</h3>
+                <p className="text-black font-bold text-lg">{feature.description}</p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-indigo-900/20 border-y border-indigo-500/10">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#FDE047] border-b-2 border-black">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             {[
               { number: '10K+', label: 'Active Users' },
-              { number: '1M+', label: 'Tasks Completed' },
-              { number: '99.9%', label: 'Uptime' },
+              { number: '1M+', label: 'Tasks Done' },
+              { number: '100%', label: 'Productivity' },
             ].map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                className="text-white"
-              >
-                <div className="text-5xl md:text-6xl font-bold mb-2 text-indigo-400">{stat.number}</div>
-                <div className="text-xl opacity-90 text-slate-300">{stat.label}</div>
-              </motion.div>
+              <div key={index} className="bg-white border-2 border-black p-8 shadow-[8px_8px_0_0_#000] transform hover:-translate-y-2 transition-transform">
+                <div className="text-6xl font-black mb-2 text-black tracking-tighter">{stat.number}</div>
+                <div className="text-xl font-bold uppercase tracking-widest">{stat.label}</div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-950">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+          <h2 className="text-5xl md:text-7xl font-black mb-8 uppercase text-[#FF6B6B]">
+            Stop Procrastinating
+          </h2>
+          <p className="text-2xl font-bold mb-12">
+            Join the revolution of organized chaos.
+          </p>
+          <Link
+            to={user ? "/dashboard" : "/register"}
+            className="inline-block px-10 py-5 bg-[#C4B5FD] text-black font-black text-2xl border-2 border-white shadow-[8px_8px_0_0_#fff] hover:shadow-[12px_12px_0_0_#fff] hover:-translate-y-1 transition-all uppercase"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready to Get Started?
-            </h2>
-            <p className="text-xl text-slate-400 mb-8">
-              Join thousands of users who are already managing their tasks more efficiently
-            </p>
-            {user ? (
-              <Link
-                to="/dashboard"
-                className="inline-block px-8 py-4 bg-indigo-600 text-white rounded-xl font-semibold text-lg hover:bg-indigo-500 transition shadow-xl shadow-indigo-500/20 transform hover:scale-105"
-              >
-                Go to Dashboard
-              </Link>
-            ) : (
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  to="/register"
-                  className="inline-block px-8 py-4 bg-indigo-600 text-white rounded-xl font-semibold text-lg hover:bg-indigo-500 transition shadow-xl shadow-indigo-500/20 transform hover:scale-105"
-                >
-                  Start Free Trial
-                </Link>
-                <Link
-                  to="/login"
-                  className="inline-block px-8 py-4 bg-slate-800 text-slate-200 rounded-xl font-semibold text-lg hover:bg-slate-700 transition shadow-lg border border-slate-700"
-                >
-                  Sign In
-                </Link>
-              </div>
-            )}
-          </motion.div>
+            {user ? "Go to Dashboard" : "Start Now"}
+          </Link>
         </div>
       </section>
-
+      
       {/* Footer */}
-      <Footer />
+      <div className="bg-white border-t-2 border-black p-8 text-center font-bold">
+        <p>© 2024 TaskFlow. Built for style.</p>
+      </div>
     </div>
   );
 };

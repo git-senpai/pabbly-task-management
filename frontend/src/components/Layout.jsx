@@ -14,33 +14,43 @@ const Layout = ({ children }) => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200">
+    <div className="min-h-screen bg-[#FFFDF5] text-black font-mono">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-lg border-b border-slate-800 shadow-lg">
+      <nav className="sticky top-0 z-50 bg-white border-b-2 border-black shadow-[0_4px_0_0_#000000]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+          <div className="flex justify-between h-20">
             <div className="flex items-center space-x-8">
               <Link to="/" className="flex items-center group">
-                <span className="text-2xl font-bold text-indigo-500 group-hover:text-indigo-400 transition-colors">TaskFlow</span>
+                <span className="text-2xl font-black italic tracking-widest text-[#8B5CF6] border-2 border-black bg-white px-2 py-1 transform -rotate-2 group-hover:rotate-0 transition-transform shadow-[2px_2px_0_0_#000]">TaskFlow</span>
               </Link>
               
-              <div className="flex space-x-1">
+              <div className="flex space-x-4">
                 <Link
                   to="/dashboard"
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2 font-black uppercase text-sm border-2 border-black transition-all duration-200 ${
                     isActive('/dashboard')
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                      : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
+                      ? 'bg-[#8B5CF6] text-white shadow-[4px_4px_0_0_#000] translate-x-[-2px] translate-y-[-2px]'
+                      : 'bg-white text-black hover:bg-gray-50 hover:shadow-[4px_4px_0_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px]'
                   }`}
                 >
                   Dashboard
                 </Link>
                 <Link
+                  to="/board"
+                  className={`px-4 py-2 font-black uppercase text-sm border-2 border-black transition-all duration-200 ${
+                    isActive('/board')
+                      ? 'bg-[#F472B6] text-white shadow-[4px_4px_0_0_#000] translate-x-[-2px] translate-y-[-2px]'
+                      : 'bg-white text-black hover:bg-gray-50 hover:shadow-[4px_4px_0_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px]'
+                  }`}
+                >
+                  Priority Board
+                </Link>
+                <Link
                   to="/analytics"
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2 font-black uppercase text-sm border-2 border-black transition-all duration-200 ${
                     isActive('/analytics')
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                      : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
+                      ? 'bg-[#FBBF24] text-black shadow-[4px_4px_0_0_#000] translate-x-[-2px] translate-y-[-2px]'
+                      : 'bg-white text-black hover:bg-gray-50 hover:shadow-[4px_4px_0_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px]'
                   }`}
                 >
                   Analytics
@@ -48,10 +58,10 @@ const Layout = ({ children }) => {
                 {isAdmin() && (
                   <Link
                     to="/users"
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    className={`px-4 py-2 font-black uppercase text-sm border-2 border-black transition-all duration-200 ${
                       isActive('/users')
-                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
+                        ? 'bg-[#A7F3D0] text-black shadow-[4px_4px_0_0_#000] translate-x-[-2px] translate-y-[-2px]'
+                        : 'bg-white text-black hover:bg-gray-50 hover:shadow-[4px_4px_0_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px]'
                     }`}
                   >
                     Users
@@ -60,21 +70,21 @@ const Layout = ({ children }) => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3 bg-slate-800/50 py-1.5 px-3 rounded-full border border-slate-700/50">
-                <div className="text-right">
-                  <p className="text-sm font-medium text-slate-200">{user?.name}</p>
-                  <p className="text-xs text-slate-500">{user?.email}</p>
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-3 bg-white py-1.5 px-4 border-2 border-black shadow-[4px_4px_0_0_#000]">
+                <div className="text-right leading-tight">
+                  <p className="text-sm font-black text-black uppercase">{user?.name}</p>
+                  <p className="text-xs text-gray-500 font-bold">{user?.email}</p>
                 </div>
                 {isAdmin() && (
-                  <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase bg-purple-500/10 text-purple-400 rounded-full border border-purple-500/20">
+                  <span className="px-2 py-0.5 text-[10px] font-black uppercase bg-[#C4B5FD] text-black border-2 border-black">
                     Admin
                   </span>
                 )}
               </div>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-red-500/10 hover:border-red-500/50 hover:shadow-red-500/20 border border-transparent rounded-lg transition-all duration-200"
+                className="px-4 py-2 text-sm font-black uppercase text-white bg-[#EF4444] border-2 border-black shadow-[4px_4px_0_0_#000] hover:bg-red-600 hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[6px_6px_0_0_#000] transition-all"
               >
                 Logout
               </button>

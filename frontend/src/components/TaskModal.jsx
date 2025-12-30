@@ -14,6 +14,7 @@ const TaskModal = ({ isOpen, onClose, taskId, onSuccess }) => {
     priority: 'Medium',
     assignedTo: [],
   });
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -108,26 +109,26 @@ const TaskModal = ({ isOpen, onClose, taskId, onSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_#000] rounded-none max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-white">
+          <div className="flex justify-between items-center mb-6 border-b-2 border-black pb-4">
+            <h2 className="text-2xl font-black italic text-black uppercase tracking-wider">
               {taskId ? 'Edit Task' : 'Create New Task'}
             </h2>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-white transition"
+              className="text-black hover:text-white transition hover:bg-[#EF4444] p-1 border-2 border-transparent hover:border-black"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Title *
               </label>
               <input
@@ -136,13 +137,13 @@ const TaskModal = ({ isOpen, onClose, taskId, onSuccess }) => {
                 required
                 value={formData.title}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none placeholder-slate-500"
-                placeholder="Enter task title"
+                className="w-full px-4 py-2 bg-white border-2 border-black text-black focus:outline-none focus:shadow-[4px_4px_0_0_#000] transition-all placeholder-gray-400 font-bold rounded-none"
+                placeholder="ENTER TASK TITLE"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Description
               </label>
               <textarea
@@ -150,14 +151,14 @@ const TaskModal = ({ isOpen, onClose, taskId, onSuccess }) => {
                 value={formData.description}
                 onChange={handleChange}
                 rows="4"
-                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none placeholder-slate-500"
-                placeholder="Enter task description"
+                className="w-full px-4 py-2 bg-white border-2 border-black text-black focus:outline-none focus:shadow-[4px_4px_0_0_#000] transition-all placeholder-gray-400 font-bold rounded-none"
+                placeholder="ENTER TASK DESCRIPTION"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-black text-black mb-2 uppercase">
                   Due Date *
                 </label>
                 <input
@@ -166,12 +167,12 @@ const TaskModal = ({ isOpen, onClose, taskId, onSuccess }) => {
                   required
                   value={formData.dueDate}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 bg-white border-2 border-black text-black focus:outline-none focus:shadow-[4px_4px_0_0_#000] transition-all font-bold rounded-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-black text-black mb-2 uppercase">
                   Priority *
                 </label>
                 <select
@@ -179,24 +180,46 @@ const TaskModal = ({ isOpen, onClose, taskId, onSuccess }) => {
                   required
                   value={formData.priority}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 bg-white border-2 border-black text-black focus:outline-none focus:shadow-[4px_4px_0_0_#000] transition-all font-bold rounded-none"
                 >
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
+                  <option value="Low">LOW</option>
+                  <option value="Medium">MEDIUM</option>
+                  <option value="High">HIGH</option>
                 </select>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Assign To *
+                <label className="block text-sm font-black text-black mb-2 uppercase flex justify-between items-center">
+                <span>Assign To *</span>
+                {isAdmin() && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nonAdminUsers = users.filter(u => u.role !== 'admin').map(u => u._id);
+                      setFormData(prev => ({ ...prev, assignedTo: nonAdminUsers }));
+                    }}
+                    className="text-xs bg-black text-white px-2 py-1 font-bold uppercase hover:bg-gray-800 transition-colors"
+                  >
+                    Assign All
+                  </button>
+                )}
               </label>
               {isAdmin() ? (
                 <div className="relative">
-                  <div className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white max-h-32 overflow-y-auto">
-                    {users.map((user) => (
-                      <label key={user._id} className="flex items-center space-x-3 py-1 cursor-pointer hover:bg-slate-700/50 rounded px-2 -mx-2">
+                  <input
+                    type="text"
+                    placeholder="SEARCH USERS..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full px-4 py-2 mb-2 bg-white border-2 border-black text-black text-sm font-bold placeholder-gray-400 focus:outline-none focus:shadow-[2px_2px_0_0_#000] rounded-none uppercase"
+                  />
+                  {/* ... */}
+                  <div className="w-full px-4 py-2 bg-white border-2 border-black text-black max-h-32 overflow-y-auto rounded-none">
+                    {users
+                      .filter(u => u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.email.toLowerCase().includes(searchQuery.toLowerCase()))
+                      .map((user) => (
+                      <label key={user._id} className="flex items-center space-x-3 py-1 cursor-pointer hover:bg-gray-100 -mx-2 px-2">
                         <input
                           type="checkbox"
                           value={user._id}
@@ -210,40 +233,34 @@ const TaskModal = ({ isOpen, onClose, taskId, onSuccess }) => {
                                 : prev.assignedTo.filter(id => id !== value)
                             }));
                           }}
-                          className="form-checkbox h-4 w-4 text-indigo-600 border-slate-500 rounded focus:ring-indigo-500 bg-slate-700"
+                          className="appearance-none h-4 w-4 border-2 border-black bg-white checked:bg-[#8B5CF6] checked:border-black focus:ring-0 focus:ring-offset-0 rounded-none cursor-pointer"
                         />
-                        <span className="text-sm">{user.name} ({user.email})</span>
+                        <span className="text-sm font-bold">{user.name}</span>
+                        <span className="text-xs text-gray-500 font-mono">({user.email})</span>
                       </label>
                     ))}
                   </div>
                   {formData.assignedTo.length === 0 && (
-                    <p className="text-xs text-red-500 mt-1">Please select at least one user</p>
+                    <p className="text-xs text-red-600 mt-1 font-black uppercase border-2 border-red-600 inline-block px-1 bg-red-100">SELECT AT LEAST ONE</p>
                   )}
                 </div>
-              ) : (
-                <input
-                  type="text"
-                  value={user?.name || ''}
-                  disabled
-                  className="w-full px-4 py-2 border border-slate-700 rounded-lg bg-slate-800/50 text-slate-400"
-                />
-              )}
+              ) : null}
             </div>
 
-            <div className="flex justify-end space-x-3 pt-4">
+            <div className="flex justify-end space-x-4 pt-6">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2 border border-slate-700 rounded-lg text-slate-300 hover:bg-slate-800 transition"
+                className="px-6 py-2 border-2 border-black text-black font-black uppercase hover:bg-gray-100 hover:shadow-[2px_2px_0_0_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all rounded-none"
               >
-                Cancel
+                CANCEL
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/20"
+                className="px-6 py-2 bg-[#FBBF24] text-black font-black uppercase border-2 border-black hover:bg-[#F59E0B] hover:shadow-[4px_4px_0_0_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all active:translate-x-0 active:translate-y-0 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed rounded-none"
               >
-                {loading ? 'Saving...' : taskId ? 'Update Task' : 'Create Task'}
+                {loading ? 'SAVING...' : taskId ? 'UPDATE TASK' : 'CREATE TASK'}
               </button>
             </div>
           </form>

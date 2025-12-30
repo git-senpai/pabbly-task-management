@@ -19,12 +19,15 @@ A modern, production-ready Task Management System built with MongoDB, Express.js
 - ✅ **User Management** - Admin can add/remove users and assign tasks
 
 ### UI/UX Features
-- 🎨 Modern, responsive design with Tailwind CSS
+- 🎨 **Light Neubrutalism Theme** - Distinctive, high-contrast aesthetics
+- 🌀 **Creative Animations** - Custom geometric loader with Framer Motion
 - 🎯 Color-coded priority visualization
-- 🔔 Toast notifications for all actions
+- 🔔 Custom-styled Toast notifications
 - 📱 Mobile-friendly responsive layout
 - ⚡ Fast and smooth user experience
-- 🎭 Beautiful modals and forms
+- 🎭 Beautiful modals and forms (Task & User Management)
+- 🖱️ **Optimized Kanban** - Smooth drag-and-drop & Click-to-nav
+- 🔢 **Advanced Pagination** - Max 2-per-category view with Prev/Next navigation
 
 ## 📁 Project Structure
 
