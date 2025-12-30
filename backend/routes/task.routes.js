@@ -399,10 +399,7 @@ router.patch(
 // @access  Private
 router.delete('/:id', async (req, res) => {
   try {
-    const task = await Task.findOne({
-      _id: req.params.id,
-      isDeleted: false,
-    });
+    const task = await Task.findById(req.params.id);
 
     if (!task) {
       return res.status(404).json({
@@ -419,9 +416,8 @@ router.delete('/:id', async (req, res) => {
       });
     }
 
-    // Soft delete
-    task.isDeleted = true;
-    await task.save();
+    // Hard delete
+    await Task.findByIdAndDelete(req.params.id);
 
     res.json({
       success: true,

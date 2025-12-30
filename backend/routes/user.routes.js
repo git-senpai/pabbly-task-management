@@ -94,7 +94,7 @@ router.delete('/:id', authorize('admin'), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
 
-    if (!user || user.isDeleted) {
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found',
@@ -109,9 +109,8 @@ router.delete('/:id', authorize('admin'), async (req, res) => {
       });
     }
 
-    // Soft delete
-    user.isDeleted = true;
-    await user.save();
+    // Hard delete
+    await User.findByIdAndDelete(req.params.id);
 
     res.json({
       success: true,
